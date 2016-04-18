@@ -1,11 +1,8 @@
 BitCurator Custom New User Creation Script
 ------------------------------------------
-<http://wiki.bitcurator.net>
+More information on the BitCurator project at <http://wiki.bitcurator.net>
 
 # Getting started
-
-
-BitCurator New User Creation Script
 
 This script creates new users in the BitCurator environment with full privileges and access to all desktop items originally created for the primary user in the live environment (bcadmin).
 
