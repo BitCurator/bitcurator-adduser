@@ -1,0 +1,272 @@
+#!/bin/bash
+
+#
+# bcadduser: Add Custom Users to the BitCurator Environment
+# ----------------------------------------------------------------------------------------------
+# <http://wiki.bitcurator.net>
+#
+# You MUST run this script with sudo!
+#
+# Example usage: sudo ./bcadduser -u LOGIN
+# (where LOGIN is the login username - no spaces or special characters)
+#
+#===============================================================================
+# vim: softtabstop=4 shiftwidth=4 expandtab fenc=utf-8 spell spelllang=en cc=81
+#===============================================================================
+#
+
+#--- FUNCTION ----------------------------------------------------------------
+# NAME: __function_defined
+# DESCRIPTION: Checks if a function is defined within this scripts scope
+# PARAMETERS: function name
+# RETURNS: 0 or 1 as in defined or not defined
+#-------------------------------------------------------------------------------
+__function_defined() {
+    FUNC_NAME=$1
+    if [ "$(command -v $FUNC_NAME)x" != "x" ]; then
+        echoinfo "Found function $FUNC_NAME"
+        return 0
+    fi
+    
+    echodebug "$FUNC_NAME not found...."
+    return 1
+}
+
+#--- FUNCTION ----------------------------------------------------------------
+# NAME: __strip_duplicates
+# DESCRIPTION: Strip duplicate strings
+#-------------------------------------------------------------------------------
+__strip_duplicates() {
+    echo $@ | tr -s '[:space:]' '\n' | awk '!x[$0]++'
+}
+
+#--- FUNCTION ----------------------------------------------------------------
+# NAME: echoinfo
+# DESCRIPTION: Echo information to stdout.
+#-------------------------------------------------------------------------------
+echoinfo() {
+    printf "${GC} * STATUS${EC}: %s\n" "$@";
+}
+
+#--- FUNCTION ----------------------------------------------------------------
+# NAME: echowarn
+# DESCRIPTION: Echo warning informations to stdout.
+#-------------------------------------------------------------------------------
+echowarn() {
+    printf "${YC} * WARN${EC}: %s\n" "$@";
+}
+
+#--- FUNCTION ----------------------------------------------------------------
+# NAME: echodebug
+# DESCRIPTION: Echo debug information to stdout.
+#-------------------------------------------------------------------------------
+echodebug() {
+    if [ $_ECHO_DEBUG -eq $BS_TRUE ]; then
+        printf "${BC} * DEBUG${EC}: %s\n" "$@";
+    fi
+}
+
+
+gschema_override() {
+  echo ""
+  echo "Checking for an existing gschema override..."
+  sleep 1
+
+  # Override the schema for launcher favorites (icons in Unity bar)
+  if [ -f "/usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override" ]; then
+    echo "The launcher favorites override is already in place. Passing..."
+  else
+    touch /usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override
+    echo "[com.canonical.Unity.Launcher]" >> /usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override
+    echo "favorites = ['application://ubiquity.desktop', 'application://nautilus.desktop', 'application://firefox.desktop', 'application://libreoffice-writer.desktop', 'application://libreoffice-calc.desktop', 'application://libreoffice-impress.desktop', 'application://gnome-terminal.desktop', 'application://ubuntu-software-center.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']" >> /usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override 
+    
+    echo "Recompiling schemas for launcher favorites..."
+    glib-compile-schemas /usr/share/glib-2.0/schemas/
+    # echo "...done."  
+  fi
+
+  # Override the schema for desktop background and color
+  if [ -f "/usr/share/glib-2.0/schemas/99_desktop.background.gschema.override" ]; then
+    echo "The desktop background override is already in place. Passing..."
+  else
+    touch /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echo "[org.gnome.desktop.background]" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echo "primary-color='#3464A2'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echo "secondary-color='#3464A2'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echo "show-desktop-icons=true" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echo "picture-uri='file:///usr/share/bitcurator/resources/images/BitCuratorEnv2Logo300px.png'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    
+    echo "Recompiling schemas for desktop backgrounds..."
+    glib-compile-schemas /usr/share/glib-2.0/schemas/
+    # echo "...done."  
+  fi
+
+  # Override the schema for desktop icons and mount visibility
+  if [ -f "/usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override" ]; then
+    echo "The desktop icons override is already in place. Passing..."
+  else
+    touch /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    echo "[org.gnome.nautilus.desktop]" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    echo "home-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    echo "trash-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    echo "network-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    
+    echo "Recompiling schemas for desktop icons and mounts..."
+    glib-compile-schemas /usr/share/glib-2.0/schemas/
+    # echo "...done."  
+  fi
+
+
+  echo "...done."
+}
+
+
+create_base_user() {
+  # Create new user as username
+  echo ""
+  echo Now creating user $1 with a directory in /home and default shell /bin/bash...
+  sleep 1
+
+  if id -u $1 >/dev/null 2>&1; then
+    echo "This user already exists! Exiting..."
+    exit 1
+  fi
+
+  # FAKE   
+  # echo useradd $1 -m -s /bin/bash  
+  # echo passwd $1
+
+  # REAL
+  useradd $1 -m -s /bin/bash
+  #passwd $1
+  echo Automatically setting password for "${USERNAME}" to changeme...
+  sleep 1
+  usermod --password $(echo changeme | openssl passwd -1 -stdin) $1
+  echo "...done."
+}
+
+customize_user() {
+  echo ""
+  echo "Copying desktop items to home folder for $1..."
+  sleep 1
+  mkdir /home/$1/Desktop
+  cp -r /usr/share/bitcurator/resources/desktop-folders/* /home/$1/Desktop
+  echo "...done."
+
+  echo ""
+  echo "Fixing permissions in user's home directory..."
+  sleep 1
+  chown -R $1:$1 /home/$1
+  echo "Setting symlink for shared folders and media..."
+  sudo -u $1 ln -s /media /home/$1/Desktop/Shared\ Folders\ and\ Media
+  echo "...done."
+
+}
+
+align_icons() {
+  # Programmatically align icons to avoid confusion
+  # Doesn't work right now; gvfs database not available until login; fix later
+  echo "/home/$1/Desktop/Imaging Tools/"
+  echo "Now aligning icons..."
+  sudo -u $1 gvfs-set-attribute -t string "/home/$1/Desktop/Imaging Tools/ 'metadata::nautilus-icon-position' '64,82'"
+  sudo -u $1 gvfs-set-attribute -t string "/home/$1/Desktop/Forensics Tools/" \'metadata::nautilus-icon-position\' \'64,162\'
+  sudo -u $1 gvfs-set-attribute -t string "/home/$1/Desktop/Accession Tools/" \'metadata::nautilus-icon-position\' \'64,242\'
+  sudo -u $1 gvfs-set-attribute -t string "/home/$1/Desktop/Additional Tools/" \'metadata::nautilus-icon-position\' \'64,322\'
+  sleep 1
+  echo "...done." 
+
+}
+
+add_local_apps() {
+  echo ""
+  echo "Making local copies of user-installed programs for $1..."
+  sleep 1
+  cp -r /home/bcadmin/.fits /home/$1/
+  cp -r /home/bcadmin/.fiwalk /home/$1/
+  cp -r /home/bcadmin/.bagger /home/$1/
+  echo "...done."
+
+  echo ""
+  echo "Fixing permissions in user's home directory..."
+  sleep 1
+  chown -R $1:$1 /home/$1
+  echo "...done."
+
+}
+
+update_sudoers() {
+  echo ""
+  while true; do
+      read -p "About to update the sudoers file with username $1. This is REQUIRED for the new user to operate with the same privileges as the bcadmin user. If you chose N or n, the script will proceed without performing the update. If you chose Y or y, the sudoers fill will be updated.  (Type Y or N and hit enter)  " yn
+      case $yn in
+          [Yy]* ) echo "Adding $1 to sudoers..."; sleep 1; sed -i "s/bcadmin ALL=(ALL) NOPASSWD: ALL/bcadmin ALL=(ALL) NOPASSWD: ALL\n$1 ALL=(ALL) NOPASSWD: ALL/g" /etc/sudoers; break;;
+          [Nn]* ) echo "Not updating sudoers. Continuing..."; break;;
+          * ) echo "Please answer yes or no.";;
+      esac
+  done
+
+  echo "...done."
+}
+
+
+#--------------------------------------------------------------------------------------
+#--------------------------- MAIN RUN START -------------------------------------------
+#--------------------------------------------------------------------------------------
+
+# Parse command-line arguments. Current version: just look for -u or --username and the
+# actual username.
+while [[ $# > 1 ]]
+do
+  key="$1"
+
+  case $key in
+      -u|--username)
+      USERNAME="$2"
+      shift # past argument
+        ;;
+        -f|--fake)
+        FAKE=YES
+        ;;
+        *)
+                # unknown option
+        ;;
+  esac
+
+  shift # past argument or value
+done
+
+
+if [[ -n $1 ]]; then
+    echo "Last line of file specified as non-opt/last argument:"
+    tail -1 $1
+fi
+
+echo ""
+echo "Ok, starting. We'll check some environmental configurations first, and then create the new user..."
+echo ---------------------------------------------------------------------------------------------------
+
+# Execute the schema override to set the appropriate Unity launcher icons and non-BC desktop items
+# The override only needs to be performed once for all future users. It will be skipped if it sees
+# an existing override file.
+gschema_override
+
+# Execute regular useradd with flags to create home directory. Autogen a "changeme" password.
+create_base_user $USERNAME
+
+# Update the sudoers file to give user all-access privileges
+update_sudoers $USERNAME
+
+# Add custom desktop items and other fixes.
+customize_user $USERNAME
+
+# Add local apps that can't be easily installed for all users
+add_local_apps $USERNAME
+
+# Align icons
+# align_icons $USERNAME
+
+echo ""
+echo "Ok, the new user has been created. Log out and select the username to log in!"
+echo ""
+
+exit 1
