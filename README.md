@@ -1,4 +1,4 @@
-BitCurator Custom New User Creation Script
+* BitCurator Custom New User Creation Script
 ------------------------------------------
 More information on the BitCurator project at <http://wiki.bitcurator.net>
 
