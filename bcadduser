@@ -68,67 +68,67 @@ echodebug() {
 
 
 gschema_override() {
-  echo ""
-  echo "Checking for an existing gschema override..."
+  echoinfo ""
+  echoinfo "Checking for an existing gschema override..."
   sleep 1
 
   # Override the schema for launcher favorites (icons in Unity bar)
   if [ -f "/usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override" ]; then
-    echo "The launcher favorites override is already in place. Passing..."
+    echoinfo "The launcher favorites override is already in place. Passing..."
   else
     touch /usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override
-    echo "[com.canonical.Unity.Launcher]" >> /usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override
+    echoinfo "[com.canonical.Unity.Launcher]" >> /usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override
     echo "favorites = ['application://ubiquity.desktop', 'application://nautilus.desktop', 'application://firefox.desktop', 'application://libreoffice-writer.desktop', 'application://libreoffice-calc.desktop', 'application://libreoffice-impress.desktop', 'application://gnome-terminal.desktop', 'application://ubuntu-software-center.desktop', 'application://unity-control-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']" >> /usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override 
     
-    echo "Recompiling schemas for launcher favorites..."
+    echoinfo "Recompiling schemas for launcher favorites..."
     glib-compile-schemas /usr/share/glib-2.0/schemas/
     # echo "...done."  
   fi
 
   # Override the schema for desktop background and color
   if [ -f "/usr/share/glib-2.0/schemas/99_desktop.background.gschema.override" ]; then
-    echo "The desktop background override is already in place. Passing..."
+    echoinfo "The desktop background override is already in place. Passing..."
   else
     touch /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
-    echo "[org.gnome.desktop.background]" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
-    echo "primary-color='#3464A2'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
-    echo "secondary-color='#3464A2'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
-    echo "show-desktop-icons=true" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
-    echo "picture-uri='file:///usr/share/bitcurator/resources/images/BitCuratorEnv2Logo300px.png'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echoinfo "[org.gnome.desktop.background]" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echoinfo "primary-color='#3464A2'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echoinfo "secondary-color='#3464A2'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echoinfo "show-desktop-icons=true" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
+    echoinfo "picture-uri='file:///usr/share/bitcurator/resources/images/BitCuratorEnv2Logo300px.png'" >> /usr/share/glib-2.0/schemas/99_desktop.background.gschema.override
     
-    echo "Recompiling schemas for desktop backgrounds..."
+    echoinfo "Recompiling schemas for desktop backgrounds..."
     glib-compile-schemas /usr/share/glib-2.0/schemas/
     # echo "...done."  
   fi
 
   # Override the schema for desktop icons and mount visibility
   if [ -f "/usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override" ]; then
-    echo "The desktop icons override is already in place. Passing..."
+    echoinfo "The desktop icons override is already in place. Passing..."
   else
     touch /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
-    echo "[org.gnome.nautilus.desktop]" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
-    echo "home-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
-    echo "trash-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
-    echo "network-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    echoinfo "[org.gnome.nautilus.desktop]" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    echoinfo "home-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    echoinfo "trash-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
+    echoinfo "network-icon-visible=true" >> /usr/share/glib-2.0/schemas/99_desktop.icons.gschema.override
     
-    echo "Recompiling schemas for desktop icons and mounts..."
+    echoinfo "Recompiling schemas for desktop icons and mounts..."
     glib-compile-schemas /usr/share/glib-2.0/schemas/
     # echo "...done."  
   fi
 
 
-  echo "...done."
+  echoinfo "...done."
 }
 
 
 create_base_user() {
   # Create new user as username
-  echo ""
-  echo Now creating user $1 with a directory in /home and default shell /bin/bash...
+  echoinfo ""
+  echoinfo Now creating user $1 with a directory in /home and default shell /bin/bash...
   sleep 1
 
   if id -u $1 >/dev/null 2>&1; then
-    echo "This user already exists! Exiting..."
+    echoinfo "This user already exists! Exiting..."
     exit 1
   fi
 
@@ -139,63 +139,63 @@ create_base_user() {
   # REAL
   useradd $1 -m -s /bin/bash
   #passwd $1
-  echo Automatically setting password for "${USERNAME}" to changeme...
+  echoinfo Automatically setting password for "${USERNAME}" to changeme...
   sleep 1
   usermod --password $(echo changeme | openssl passwd -1 -stdin) $1
-  echo "...done."
+  echoinfo "...done."
 }
 
 customize_user() {
-  echo ""
-  echo "Copying desktop items to home folder for $1..."
+  echoinfo ""
+  echoinfo "Copying desktop items to home folder for $1..."
   sleep 1
   mkdir /home/$1/Desktop
   cp -r /usr/share/bitcurator/resources/desktop-folders/* /home/$1/Desktop
-  echo "...done."
+  echoinfo "...done."
 
-  echo ""
-  echo "Fixing permissions in user's home directory..."
+  echoinfo ""
+  echoinfo "Fixing permissions in user's home directory..."
   sleep 1
   chown -R $1:$1 /home/$1
-  echo "Setting symlink for shared folders and media..."
+  echoinfo "Setting symlink for shared folders and media..."
   sudo -u $1 ln -s /media /home/$1/Desktop/Shared\ Folders\ and\ Media
-  echo "...done."
+  echoinfo "...done."
 
 }
 
 align_icons() {
   # Programmatically align icons to avoid confusion
   # Doesn't work right now; gvfs database not available until login; fix later
-  echo "/home/$1/Desktop/Imaging Tools/"
-  echo "Now aligning icons..."
+  echoinfo "/home/$1/Desktop/Imaging Tools/"
+  echoinfo "Now aligning icons..."
   sudo -u $1 gvfs-set-attribute -t string "/home/$1/Desktop/Imaging Tools/ 'metadata::nautilus-icon-position' '64,82'"
   sudo -u $1 gvfs-set-attribute -t string "/home/$1/Desktop/Forensics Tools/" \'metadata::nautilus-icon-position\' \'64,162\'
   sudo -u $1 gvfs-set-attribute -t string "/home/$1/Desktop/Accession Tools/" \'metadata::nautilus-icon-position\' \'64,242\'
   sudo -u $1 gvfs-set-attribute -t string "/home/$1/Desktop/Additional Tools/" \'metadata::nautilus-icon-position\' \'64,322\'
   sleep 1
-  echo "...done." 
+  echoinfo "...done." 
 
 }
 
 add_local_apps() {
-  echo ""
-  echo "Making local copies of user-installed programs for $1..."
+  echoinfo ""
+  echoinfo "Making local copies of user-installed programs for $1..."
   sleep 1
   cp -r /home/bcadmin/.fits /home/$1/
   cp -r /home/bcadmin/.fiwalk /home/$1/
   cp -r /home/bcadmin/.bagger /home/$1/
-  echo "...done."
+  echoinfo "...done."
 
-  echo ""
-  echo "Fixing permissions in user's home directory..."
+  echoinfo ""
+  echoinfo "Fixing permissions in user's home directory..."
   sleep 1
   chown -R $1:$1 /home/$1
-  echo "...done."
+  echoinfo "...done."
 
 }
 
 update_sudoers() {
-  echo ""
+  echoinfo ""
   while true; do
       read -p "About to update the sudoers file with username $1. This is REQUIRED for the new user to operate with the same privileges as the bcadmin user. If you chose N or n, the script will proceed without performing the update. If you chose Y or y, the sudoers fill will be updated.  (Type Y or N and hit enter)  " yn
       case $yn in
@@ -205,7 +205,7 @@ update_sudoers() {
       esac
   done
 
-  echo "...done."
+  echoinfo "...done."
 }
 
 
@@ -241,9 +241,9 @@ if [[ -n $1 ]]; then
     tail -1 $1
 fi
 
-echo ""
-echo "Ok, starting. We'll check some environmental configurations first, and then create the new user..."
-echo ---------------------------------------------------------------------------------------------------
+echoinfo ""
+echoinfo "Ok, starting. We'll check some environmental configurations first, and then create the new user..."
+echoinfo ---------------------------------------------------------------------------------------------------
 
 # Execute the schema override to set the appropriate Unity launcher icons and non-BC desktop items
 # The override only needs to be performed once for all future users. It will be skipped if it sees
@@ -265,8 +265,8 @@ add_local_apps $USERNAME
 # Align icons
 # align_icons $USERNAME
 
-echo ""
-echo "Ok, the new user has been created. Log out and select the username to log in!"
-echo ""
+echoinfo ""
+echoinfo "Ok, the new user has been created. Log out and select the username to log in!"
+echoinfo ""
 
 exit 1
