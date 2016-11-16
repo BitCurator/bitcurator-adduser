@@ -1,5 +1,5 @@
-* BitCurator Custom New User Creation Script
-------------------------------------------
+BitCurator environment custom new user creation script
+------------------------------------------------------
 More information on the BitCurator project at <http://wiki.bitcurator.net>
 
 # Getting started
