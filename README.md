@@ -10,11 +10,15 @@ This script creates new users in the BitCurator environment with full privileges
 
 Open a terminal in BitCurator-1.6.6 or later, and clone out this repository:
 
- * git clone https://github.com/bitcurator/bitcurator-adduser
+```shell
+git clone https://github.com/bitcurator/bitcurator-adduser
+```
 
 Change directory into the new bitcurator-adduser directory, and run:
 
- * sudo ./bcadduser -u USERNAME
+```shell
+sudo ./bcadduser -u USERNAME
+```
 
 where USERNAME is the name of the new user you wish to create. The username must not include any spaces.
 
