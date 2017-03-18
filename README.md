@@ -1,5 +1,8 @@
 # BitCurator environment custom new user creation script
 
+[![GitHub issues](https://img.shields.io/github/issues/bitcurator/bitcurator-distro-adduser.svg)](https://github.com/bitcurator/bitcurator-distro-adduser/issues)
+[![GitHub forks](https://img.shields.io/github/forks/bitcurator/bitcurator-distro-adduser.svg)](https://github.com/bitcurator/bitcurator-distro-adduser/network)
+
 More information on the BitCurator project at <http://wiki.bitcurator.net>
 
 ## Getting started
