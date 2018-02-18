@@ -1,3 +1,5 @@
+[![Logo](https://wiki.bitcurator.net/downloads/BitCurator-400px.png)
+
 # BitCurator environment custom new user creation script
 
 [![GitHub issues](https://img.shields.io/github/issues/bitcurator/bitcurator-distro-adduser.svg)](https://github.com/bitcurator/bitcurator-distro-adduser/issues)
