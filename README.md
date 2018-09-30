@@ -5,7 +5,9 @@
 [![GitHub issues](https://img.shields.io/github/issues/bitcurator/bitcurator-distro-adduser.svg)](https://github.com/bitcurator/bitcurator-distro-adduser/issues)
 [![GitHub forks](https://img.shields.io/github/forks/bitcurator/bitcurator-distro-adduser.svg)](https://github.com/bitcurator/bitcurator-distro-adduser/network)
 
-More information on the BitCurator project at <http://wiki.bitcurator.net>
+## DEPRECATION NOTICE:
+
+This repository has been deprecated, and is no longer maintained. Details on the latest release can be found at (https://github.com/bitcurator/bitcurator-distro). The most recent Salt-based build repository can be found at (https://github.com/bitcurator/bitcurator-distro-salt).
 
 ## Getting started
 
