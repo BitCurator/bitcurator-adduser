@@ -4,6 +4,8 @@
 
 [![GitHub issues](https://img.shields.io/github/issues/bitcurator/bitcurator-distro-adduser.svg)](https://github.com/bitcurator/bitcurator-distro-adduser/issues)
 [![GitHub forks](https://img.shields.io/github/forks/bitcurator/bitcurator-distro-adduser.svg)](https://github.com/bitcurator/bitcurator-distro-adduser/network)
+[![Build Status](https://travis-ci.org/BitCurator/bitcurator-distro-adduser.svg?branch=master)](https://travis-ci.org/BitCurator/bitcurator-distro-adduser)
+[![Twitter Follow](https://img.shields.io/twitter/follow/bitcurator.svg?style=social&label=Follow)](https://twitter.com/bitcurator)
 
 ## DEPRECATION NOTICE:
 
